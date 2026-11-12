@@ -1,0 +1,71 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e1e5ec;
+}
+
+.brand {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2b4acb;
+  text-decoration: none;
+}
+
+nav {
+  flex: 1;
+  display: flex;
+  gap: 16px;
+
+  a {
+    color: #5b6475;
+    text-decoration: none;
+
+    &.active {
+      color: #1d2433;
+      font-weight: 600;
+    }
+  }
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  a {
+    color: #1d2433;
+    text-decoration: none;
+  }
+
+  .primary {
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #2b4acb;
+    color: #fff;
+  }
+
+  .name {
+    font-weight: 600;
+  }
+
+  .role {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #e8edff;
+    color: #2b4acb;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  button {
+    padding: 8px 12px;
+    border: 1px solid #c9cfda;
+    border-radius: 8px;
+    background: #fff;
+    font: inherit;
+    cursor: pointer;
+  }
+}
