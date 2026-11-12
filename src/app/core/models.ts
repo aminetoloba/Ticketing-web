@@ -32,3 +32,27 @@ export interface EventQuery {
   page?: number;
   pageSize?: number;
 }
+
+export type Role = 'Participant' | 'Organizer' | 'Staff' | 'Admin';
+
+export interface RegisterRequest {
+  fullName: string;
+  email: string;
+  password: string;
+  role: 'Participant' | 'Organizer';
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresAt: string;
+  userId: string;
+  email: string;
+  fullName: string;
+  role: Role;
+}

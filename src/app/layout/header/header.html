@@ -1,0 +1,18 @@
+<header class="header">
+  <a class="brand" routerLink="/events">Billetterie</a>
+
+  <nav>
+    <a routerLink="/events" routerLinkActive="active">Événements</a>
+  </nav>
+
+  <div class="account">
+    @if (auth.user(); as user) {
+      <span class="name">{{ user.fullName }}</span>
+      <span class="role">{{ roleLabels[user.role] }}</span>
+      <button type="button" (click)="logout()">Se déconnecter</button>
+    } @else {
+      <a routerLink="/login">Connexion</a>
+      <a class="primary" routerLink="/register">Inscription</a>
+    }
+  </div>
+</header>

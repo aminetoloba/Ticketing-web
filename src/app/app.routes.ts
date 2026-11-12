@@ -7,5 +7,13 @@ export const routes: Routes = [
     // Chargement différé : la page n'est téléchargée que lorsqu'on la visite
     loadComponent: () => import('./events/event-list/event-list').then((m) => m.EventList),
   },
+    {
+    path: 'login',
+    loadComponent: () => import('./auth/login/login').then((m) => m.Login),
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./auth/register/register').then((m) => m.Register),
+  },
   { path: '**', redirectTo: 'events' },
 ];
