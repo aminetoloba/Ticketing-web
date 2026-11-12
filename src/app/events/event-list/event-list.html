@@ -1,0 +1,47 @@
+<section class="catalogue">
+  <h1>Événements</h1>
+
+  <div class="filters">
+    <input type="search" placeholder="Rechercher un événement" [formControl]="search" />
+    <input type="search" placeholder="Lieu" [formControl]="location" />
+  </div>
+
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+
+  @if (loading() && !result()) {
+    <p>Chargement…</p>
+  }
+
+  @if (result(); as data) {
+    @if (data.items.length === 0) {
+      <p>Aucun événement ne correspond à votre recherche.</p>
+    } @else {
+      <ul class="cards" [class.loading]="loading()">
+        @for (event of data.items; track event.id) {
+          <li class="card">
+            @if (event.status === 'Postponed') {
+              <span class="badge">Reporté</span>
+            }
+            <h2>{{ event.title }}</h2>
+            <p class="meta">{{ event.location }}</p>
+            <p class="meta">{{ event.startDate | date: 'EEEE d MMMM y, HH:mm' }}</p>
+            @if (event.status === 'Postponed' && event.originalStartDate) {
+              <p class="meta">Initialement prévu le {{ event.originalStartDate | date: 'd MMMM y' }}</p>
+            }
+            <p class="description">{{ event.description }}</p>
+          </li>
+        }
+      </ul>
+
+      @if (data.totalPages > 1) {
+        <nav class="pagination" aria-label="Pagination">
+          <button type="button" (click)="goTo(data.page - 1)" [disabled]="data.page <= 1">Précédent</button>
+          <span>Page {{ data.page }} sur {{ data.totalPages }} ({{ data.totalCount }} événements)</span>
+          <button type="button" (click)="goTo(data.page + 1)" [disabled]="data.page >= data.totalPages">Suivant</button>
+        </nav>
+      }
+    }
+  }
+</section>
