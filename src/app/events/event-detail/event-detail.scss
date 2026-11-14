@@ -1,0 +1,133 @@
+.detail {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.back {
+  color: #5b6475;
+  text-decoration: none;
+}
+
+h1 {
+  margin: 16px 0 8px;
+}
+
+.meta {
+  margin: 4px 0;
+  color: #5b6475;
+  font-size: 0.9rem;
+}
+
+.description {
+  margin: 16px 0;
+  white-space: pre-line;
+}
+
+.banner {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #eef1f6;
+
+  &.warning {
+    background: #fff3cd;
+    color: #7a5a00;
+  }
+
+  &.danger {
+    background: #fde8e8;
+    color: #9b1c1c;
+  }
+}
+
+.tickets {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticket {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid #e1e5ec;
+  border-radius: 12px;
+
+  h3 {
+    margin: 0 0 4px;
+  }
+
+  .price {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .soldout {
+    color: #9b1c1c;
+    font-weight: 600;
+  }
+}
+
+.qty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  button {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #c9cfda;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+  }
+
+  span {
+    min-width: 24px;
+    text-align: center;
+    font-weight: 600;
+  }
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0 12px;
+  font-size: 1.1rem;
+}
+
+.primary {
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 8px;
+  background: #2b4acb;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.error {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fde8e8;
+  color: #9b1c1c;
+}

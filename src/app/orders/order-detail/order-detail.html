@@ -1,0 +1,66 @@
+<main class="order">
+  @if (loading()) {
+    <p>Chargement…</p>
+  } @else if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+    <a routerLink="/events">Retour aux événements</a>
+  } @else if (order(); as o) {
+    <h1>Commande</h1>
+
+    @if (event(); as e) {
+      <p class="meta">
+        <a [routerLink]="['/events', e.id]">{{ e.title }}</a> · {{ e.startDate | date: 'EEEE d MMMM y, HH:mm' }}
+      </p>
+    }
+
+    @if (isExpired()) {
+      <div class="banner danger">
+        <strong>La réservation a expiré.</strong> Les places ont été remises en vente.
+        @if (event(); as e) {
+          <a [routerLink]="['/events', e.id]">Recommencer ma commande</a>
+        }
+      </div>
+    } @else if (isActive()) {
+      <div class="banner countdown" [class.urgent]="msLeft() < 60000">
+        <span>Places réservées pendant encore</span>
+        <strong>{{ countdown() }}</strong>
+      </div>
+    }
+
+    <p>
+      Statut :
+      <span class="status" [class]="o.status">{{ isExpired() ? statusLabels['Expired'] : statusLabels[o.status] }}</span>
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Billet</th>
+          <th>Quantité</th>
+          <th>Prix unitaire</th>
+          <th>Sous-total</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of o.items; track item.ticketTypeId) {
+          <tr>
+            <td>{{ ticketTypeNames()[item.ticketTypeId] ?? 'Billet' }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.unitPrice | currency: currency : 'symbol' : '1.2-2' }}</td>
+            <td>{{ item.subtotal | currency: currency : 'symbol' : '1.2-2' }}</td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Total</td>
+          <td>{{ o.totalAmount | currency: currency : 'symbol' : '1.2-2' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    @if (isActive()) {
+      <p class="meta">Le paiement s'ajoute à l'étape suivante.</p>
+    }
+  }
+</main>

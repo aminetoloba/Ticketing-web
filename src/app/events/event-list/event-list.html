@@ -24,7 +24,7 @@
             @if (event.status === 'Postponed') {
               <span class="badge">Reporté</span>
             }
-            <h2>{{ event.title }}</h2>
+            <h2><a [routerLink]="['/events', event.id]">{{ event.title }}</a></h2>
             <p class="meta">{{ event.location }}</p>
             <p class="meta">{{ event.startDate | date: 'EEEE d MMMM y, HH:mm' }}</p>
             @if (event.status === 'Postponed' && event.originalStartDate) {

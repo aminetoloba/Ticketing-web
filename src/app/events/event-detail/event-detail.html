@@ -1,0 +1,91 @@
+<main class="detail">
+  <a routerLink="/events" class="back">← Tous les événements</a>
+
+  @if (loading()) {
+    <p>Chargement…</p>
+  } @else if (loadError(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  } @else if (event(); as e) {
+    <h1>{{ e.title }}</h1>
+
+    @if (e.status === 'Postponed') {
+      <div class="banner warning">
+        <strong>Événement reporté.</strong>
+        Nouvelle date : {{ e.startDate | date: 'EEEE d MMMM y, HH:mm' }}.
+        @if (e.originalStartDate) {
+          Initialement prévu le {{ e.originalStartDate | date: 'd MMMM y' }}.
+        }
+        Motif : {{ e.postponementReason }}.
+        @if (e.refundWindowEndsAt) {
+          Les billets achetés avant l'annonce sont remboursables jusqu'au
+          {{ e.refundWindowEndsAt | date: 'd MMMM y' }}.
+        }
+      </div>
+    }
+    @if (e.status === 'Cancelled') {
+      <div class="banner danger"><strong>Événement annulé.</strong> Les billets ont été remboursés.</div>
+    }
+    @if (e.status === 'Completed') {
+      <div class="banner"><strong>Événement terminé.</strong></div>
+    }
+
+    <p class="meta">{{ e.location }}</p>
+    <p class="meta">
+      Du {{ e.startDate | date: 'EEEE d MMMM y, HH:mm' }} au {{ e.endDate | date: 'EEEE d MMMM y, HH:mm' }}
+    </p>
+    <p class="description">{{ e.description }}</p>
+
+    <h2>Billets</h2>
+
+    @if (ticketTypes().length === 0) {
+      <p class="meta">Aucun billet n'est proposé pour le moment.</p>
+    } @else {
+      <ul class="tickets">
+        @for (t of ticketTypes(); track t.id) {
+          <li class="ticket">
+            <div>
+              <h3>{{ t.name }}</h3>
+              <p class="price">{{ t.price | currency: currency : 'symbol' : '1.2-2' }}</p>
+              <p class="meta" [class.soldout]="t.remaining === 0">
+                {{ t.remaining === 0 ? 'Complet' : t.remaining + ' place(s) restante(s)' }}
+              </p>
+            </div>
+
+            @if (onSale() && isBuyer()) {
+              <div class="qty">
+                <button type="button" (click)="change(t, -1)" [disabled]="quantity(t) === 0" aria-label="Retirer un billet">−</button>
+                <span>{{ quantity(t) }}</span>
+                <button type="button" (click)="change(t, 1)" [disabled]="!canIncrease(t)" aria-label="Ajouter un billet">+</button>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    }
+
+    @if (!onSale()) {
+      <p class="meta">Les ventes sont closes pour cet événement.</p>
+    } @else if (!auth.isLoggedIn()) {
+      <p>
+        <a routerLink="/login" [queryParams]="{ returnUrl: '/events/' + eventId }">Connectez-vous</a>
+        pour réserver vos billets.
+      </p>
+    } @else if (!isBuyer()) {
+      <p class="meta">Votre compte ne permet pas d'acheter des billets.</p>
+    } @else {
+      <div class="summary">
+        <span>{{ totalTickets() }} billet(s)</span>
+        <strong>{{ totalPrice() | currency: currency : 'symbol' : '1.2-2' }}</strong>
+      </div>
+
+      @if (orderError(); as message) {
+        <p class="error" role="alert">{{ message }}</p>
+      }
+
+      <button type="button" class="primary" (click)="reserve()" [disabled]="totalTickets() === 0 || submitting()">
+        {{ submitting() ? 'Réservation…' : 'Réserver' }}
+      </button>
+      <p class="meta">Vos places sont réservées pendant 10 minutes, le temps de payer.</p>
+    }
+  }
+</main>

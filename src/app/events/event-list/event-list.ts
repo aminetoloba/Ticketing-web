@@ -5,12 +5,13 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Subject, catchError, debounceTime, merge, of, switchMap, tap } from 'rxjs';
 import { EventsApi } from '../../core/events-api';
 import { EventDto, PagedResult } from '../../core/models';
+import { RouterLink } from '@angular/router';
 
 const PAGE_SIZE = 9;
 
 @Component({
   selector: 'app-event-list',
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, RouterLink],
   templateUrl: './event-list.html',
   styleUrl: './event-list.scss',
 })

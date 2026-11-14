@@ -56,3 +56,37 @@ export interface AuthResponse {
   fullName: string;
   role: Role;
 }
+
+export interface TicketTypeDto {
+  id: string;
+  eventId: string;
+  name: string;
+  price: number;
+  totalQuantity: number;
+  soldQuantity: number;
+  remaining: number;
+}
+
+export type OrderStatus = 'Pending' | 'Paid' | 'Expired' | 'Cancelled';
+
+export interface OrderItemDto {
+  ticketTypeId: string;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
+}
+
+export interface OrderDto {
+  id: string;
+  eventId: string;
+  status: OrderStatus;
+  createdAt: string;
+  expiresAt: string;
+  totalAmount: number;
+  items: OrderItemDto[];
+}
+
+export interface CreateOrderRequest {
+  eventId: string;
+  lines: { ticketTypeId: string; quantity: number }[];
+}
