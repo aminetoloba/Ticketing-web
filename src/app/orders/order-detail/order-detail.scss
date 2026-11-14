@@ -1,0 +1,82 @@
+.order {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.meta {
+  color: #5b6475;
+  font-size: 0.9rem;
+}
+
+.banner {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-radius: 8px;
+
+  &.danger {
+    background: #fde8e8;
+    color: #9b1c1c;
+  }
+
+  &.countdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #e8f4ea;
+    color: #1f5b2d;
+
+    strong {
+      font-size: 1.6rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &.urgent {
+      background: #fff3cd;
+      color: #7a5a00;
+    }
+  }
+}
+
+.status {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #eef1f6;
+  font-weight: 600;
+
+  &.Paid {
+    background: #e8f4ea;
+    color: #1f5b2d;
+  }
+
+  &.Expired,
+  &.Cancelled {
+    background: #fde8e8;
+    color: #9b1c1c;
+  }
+}
+
+table {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+  background: #fff;
+
+  th,
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e1e5ec;
+    text-align: left;
+  }
+
+  tfoot td {
+    font-weight: 700;
+  }
+}
+
+.error {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fde8e8;
+  color: #9b1c1c;
+}

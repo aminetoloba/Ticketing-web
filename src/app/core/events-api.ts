@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { API_URL } from './api-config';
-import { EventDto, EventQuery, PagedResult } from './models';
+import { EventDto, EventQuery, PagedResult, TicketTypeDto } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class EventsApi {
@@ -16,5 +16,13 @@ export class EventsApi {
       }
     }
     return this.http.get<PagedResult<EventDto>>(`${API_URL}/events`, { params });
+  }
+
+  get(id: string) {
+    return this.http.get<EventDto>(`${API_URL}/events/${id}`);
+  }
+
+  ticketTypes(id: string) {
+    return this.http.get<TicketTypeDto[]>(`${API_URL}/events/${id}/ticket-types`);
   }
 }
