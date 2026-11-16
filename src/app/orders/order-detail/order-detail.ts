@@ -36,6 +36,15 @@ export class OrderDetail {
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
 
+    // Jetons de test de la passerelle simulée de l'API
+  protected readonly methods = [
+    { value: 'tok_visa', label: 'Carte de test : paiement accepté' },
+    { value: 'tok_chargeDeclined', label: 'Carte de test : paiement refusé' },
+  ];
+  protected readonly paymentMethod = signal('tok_visa');
+  protected readonly paying = signal(false);
+  protected readonly payError = signal<string | null>(null);
+
   // Horloge du navigateur, mise à jour chaque seconde
   private readonly now = signal(Date.now());
 
@@ -60,33 +69,68 @@ export class OrderDetail {
     return `${mm}:${ss}`;
   });
 
-  constructor() {
-    interval(1000)
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => this.now.set(Date.now()));
+    constructor() {
+      interval(1000)
+        .pipe(takeUntilDestroyed())
+        .subscribe(() => this.now.set(Date.now()));
 
-    this.ordersApi
-      .get(this.orderId)
-      .pipe(
-        switchMap((order) =>
-          forkJoin({
-            event: this.eventsApi.get(order.eventId),
-            ticketTypes: this.eventsApi.ticketTypes(order.eventId),
-          }).pipe(map((extra) => ({ order, ...extra }))),
-        ),
-      )
-      .subscribe({
-        next: ({ order, event, ticketTypes }) => {
-          this.order.set(order);
-          this.event.set(event);
-          this.ticketTypeNames.set(Object.fromEntries(ticketTypes.map((t) => [t.id, t.name])));
-          this.loading.set(false);
+      this.ordersApi
+        .get(this.orderId)
+        .pipe(
+          switchMap((order) =>
+            forkJoin({
+              event: this.eventsApi.get(order.eventId),
+              ticketTypes: this.eventsApi.ticketTypes(order.eventId),
+            }).pipe(map((extra) => ({ order, ...extra }))),
+          ),
+        )
+        .subscribe({
+          next: ({ order, event, ticketTypes }) => {
+            this.order.set(order);
+            this.event.set(event);
+            this.ticketTypeNames.set(Object.fromEntries(ticketTypes.map((t) => [t.id, t.name])));
+            this.loading.set(false);
+          },
+          error: (error: unknown) => {
+            const notFound = error instanceof HttpErrorResponse && error.status === 404;
+            this.error.set(notFound ? 'Commande introuvable.' : apiErrorMessage(error));
+            this.loading.set(false);
+          },
+        });
+    }
+
+    protected pay(): void {
+      const order = this.order();
+
+      // Le bouton est désactivé pendant l'envoi : un double clic ne paie pas deux fois
+      if (!order || this.paying() || !this.isActive()) return;
+
+      this.paying.set(true);
+      this.payError.set(null);
+
+      this.ordersApi.pay(order.id, this.paymentMethod()).subscribe({
+        next: (paid) => {
+          this.order.set(paid);
+          this.paying.set(false);
         },
         error: (error: unknown) => {
-          const notFound = error instanceof HttpErrorResponse && error.status === 404;
-          this.error.set(notFound ? 'Commande introuvable.' : apiErrorMessage(error));
-          this.loading.set(false);
+          this.payError.set(apiErrorMessage(error));
+          this.paying.set(false);
+
+          // 402 (carte refusée) et réseau coupé : la commande n'a pas changé, on peut réessayer.
+          // Sinon (expirée, annulée, payée ailleurs), on relit son état réel.
+          const status = error instanceof HttpErrorResponse ? error.status : -1;
+          if (status !== 402 && status !== 0) this.reloadOrder();
         },
-      });
+    });
+  }
+
+  private reloadOrder(): void {
+    this.ordersApi.get(this.orderId).subscribe({
+      next: (order) => this.order.set(order),
+      error: () => {
+        // On garde l'affichage actuel : le message d'erreur du paiement est déjà visible
+      },
+    });
   }
 }

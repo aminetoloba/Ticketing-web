@@ -90,3 +90,19 @@ export interface CreateOrderRequest {
   eventId: string;
   lines: { ticketTypeId: string; quantity: number }[];
 }
+
+export type TicketStatus = 'Valid' | 'Used' | 'Cancelled';
+
+export interface TicketDto {
+  id: string;
+  orderId: string;
+  eventId: string;
+  eventTitle: string;
+  eventLocation: string;
+  eventStartDate: string;
+  eventEndDate: string;
+  eventStatus: EventStatus;
+  ticketTypeName: string;
+  status: TicketStatus;
+  code: string;
+}

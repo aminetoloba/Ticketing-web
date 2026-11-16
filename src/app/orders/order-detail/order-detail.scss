@@ -80,3 +80,58 @@ table {
   background: #fde8e8;
   color: #9b1c1c;
 }
+
+.banner.success {
+  background: #e8f4ea;
+  color: #1f5b2d;
+}
+
+.payment {
+  margin-top: 24px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e1e5ec;
+  border-radius: 12px;
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 1.1rem;
+  }
+
+  fieldset {
+    margin: 12px 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .method {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+  }
+}
+
+.primary {
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 8px;
+  background: #2b4acb;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}

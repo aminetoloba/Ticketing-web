@@ -1,0 +1,31 @@
+<main class="orders">
+  <h1>Mes commandes</h1>
+
+  @if (loading()) {
+    <p>Chargement…</p>
+  } @else if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  } @else if (orders().length === 0) {
+    <p>Vous n'avez pas encore de commande.</p>
+    <a routerLink="/events">Découvrir les événements</a>
+  } @else {
+    <ul class="list">
+      @for (o of orders(); track o.id) {
+        <li class="row">
+          <div>
+            <a [routerLink]="['/orders', o.id]">{{ eventTitles()[o.eventId] ?? 'Événement' }}</a>
+            <p class="meta">Commande du {{ o.createdAt | date: 'd MMMM y, HH:mm' }}</p>
+          </div>
+
+          <div class="right">
+            <strong>{{ o.totalAmount | currency: currency : 'symbol' : '1.2-2' }}</strong>
+            <span class="status" [class]="status(o)">{{ statusLabels[status(o)] }}</span>
+            @if (status(o) === 'Pending') {
+              <a class="cta" [routerLink]="['/orders', o.id]">Payer</a>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</main>

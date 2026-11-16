@@ -27,6 +27,13 @@
       </div>
     }
 
+    @if (o.status === 'Paid') {
+      <div class="banner success">
+        <strong>Paiement confirmé.</strong> Vos billets ont été émis.
+        <a routerLink="/tickets" routerLinkActive="active">Mes billets</a>
+      </div>
+    }
+
     <p>
       Statut :
       <span class="status" [class]="o.status">{{ isExpired() ? statusLabels['Expired'] : statusLabels[o.status] }}</span>
@@ -60,7 +67,36 @@
     </table>
 
     @if (isActive()) {
-      <p class="meta">Le paiement s'ajoute à l'étape suivante.</p>
+      <section class="payment">
+        <h2>Paiement</h2>
+        <p class="meta">
+          Mode démonstration : aucune vraie carte n'est utilisée et aucune donnée bancaire n'est saisie.
+        </p>
+
+        <fieldset [disabled]="paying()">
+          <legend class="visually-hidden">Carte de test</legend>
+          @for (method of methods; track method.value) {
+            <label class="method">
+              <input
+                type="radio"
+                name="method"
+                [value]="method.value"
+                [checked]="paymentMethod() === method.value"
+                (change)="paymentMethod.set(method.value)"
+              />
+              {{ method.label }}
+            </label>
+          }
+        </fieldset>
+
+        @if (payError(); as message) {
+          <p class="error" role="alert">{{ message }}</p>
+        }
+
+        <button type="button" class="primary" (click)="pay()" [disabled]="paying()">
+          {{ paying() ? 'Paiement en cours…' : 'Payer ' + (o.totalAmount | currency: currency : 'symbol' : '1.2-2') }}
+        </button>
+      </section>
     }
   }
 </main>

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard } from './core/guards';
+import { authGuard, guestGuard, roleGuard } from './core/guards';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'events' },
@@ -13,9 +13,19 @@ export const routes: Routes = [
     loadComponent: () => import('./events/event-detail/event-detail').then((m) => m.EventDetail),
   },
   {
+    path: 'orders',
+    canActivate: [authGuard],
+    loadComponent: () => import('./orders/order-list/order-list').then((m) => m.OrderList),
+  },
+  {
     path: 'orders/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./orders/order-detail/order-detail').then((m) => m.OrderDetail),
+  },
+  {
+    path: 'tickets',
+    canActivate: [roleGuard('Participant', 'Organizer')],
+    loadComponent: () => import('./tickets/ticket-list/ticket-list').then((m) => m.TicketList),
   },
   {
     path: 'login',
