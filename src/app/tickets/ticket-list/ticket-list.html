@@ -1,0 +1,74 @@
+<main class="tickets">
+  <h1>Mes billets</h1>
+
+  @if (loading()) {
+    <p>Chargement…</p>
+  } @else if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  } @else if (tickets().length === 0) {
+    <p>Vous n'avez pas encore de billet.</p>
+    <a routerLink="/events">Découvrir les événements</a>
+  } @else {
+    @if (usable().length > 0) {
+      <h2>À venir</h2>
+      <ul class="list">
+        @for (t of usable(); track t.id) {
+          <li class="ticket">
+            <div class="head">
+              <div>
+                <a class="title" [routerLink]="['/events', t.eventId]">{{ t.eventTitle }}</a>
+                <p class="meta">{{ t.eventLocation }}</p>
+                <p class="meta">{{ t.eventStartDate | date: 'EEEE d MMMM y, HH:mm' }}</p>
+                <p class="meta">{{ t.ticketTypeName }}</p>
+              </div>
+              <div class="badges">
+                <span class="status Valid">{{ statusLabels[t.status] }}</span>
+                @if (t.eventStatus === 'Postponed') {
+                  <span class="status Postponed">{{ eventStatusLabels['Postponed'] }}</span>
+                }
+              </div>
+            </div>
+
+            @if (qr()[t.id]; as src) {
+              <div class="qr">
+                <img [src]="src" width="220" height="220" alt="QR code du billet {{ t.ticketTypeName }}" />
+                <p class="meta">À présenter à l'entrée. Si le scan échoue, donnez ce code au contrôle :</p>
+                <code>{{ t.code }}</code>
+              </div>
+            }
+
+            @if (qrError()[t.id]; as message) {
+              <p class="error" role="alert">{{ message }}</p>
+            }
+
+            <button type="button" (click)="toggleQr(t)" [disabled]="qrLoading()[t.id]">
+              {{ qrLoading()[t.id] ? 'Chargement…' : qr()[t.id] ? 'Masquer le QR code' : 'Afficher le QR code' }}
+            </button>
+          </li>
+        }
+      </ul>
+    }
+
+    @if (others().length > 0) {
+      <h2>Utilisés, annulés ou passés</h2>
+      <ul class="list muted">
+        @for (t of others(); track t.id) {
+          <li class="ticket">
+            <div class="head">
+              <div>
+                <a class="title" [routerLink]="['/events', t.eventId]">{{ t.eventTitle }}</a>
+                <p class="meta">{{ t.eventStartDate | date: 'd MMMM y, HH:mm' }} · {{ t.ticketTypeName }}</p>
+              </div>
+              <div class="badges">
+                <span class="status" [class]="t.status">{{ statusLabels[t.status] }}</span>
+                @if (eventStatusLabels[t.eventStatus]; as label) {
+                  <span class="status" [class]="t.eventStatus">{{ label }}</span>
+                }
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  }
+</main>

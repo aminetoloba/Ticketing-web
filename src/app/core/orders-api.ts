@@ -14,4 +14,12 @@ export class OrdersApi {
   get(id: string) {
     return this.http.get<OrderDto>(`${API_URL}/orders/${id}`);
   }
+
+  mine() {
+    return this.http.get<OrderDto[]>(`${API_URL}/orders/mine`);
+  }
+
+  pay(id: string, paymentMethod: string) {
+    return this.http.post<OrderDto>(`${API_URL}/orders/${id}/pay`, { paymentMethod });
+  }
 }

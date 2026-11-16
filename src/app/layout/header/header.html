@@ -3,6 +3,12 @@
 
   <nav>
     <a routerLink="/events" routerLinkActive="active">Événements</a>
+    @if (auth.user(); as user) {
+      @if (user.role === 'Participant' || user.role === 'Organizer') {
+        <a routerLink="/orders" routerLinkActive="active">Mes commandes</a>
+        <a routerLink="/tickets" routerLinkActive="active">Mes billets</a>
+      }
+    }
   </nav>
 
   <div class="account">
