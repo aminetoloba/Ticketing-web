@@ -1,0 +1,22 @@
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.checklist {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+
+  li::before {
+    content: '✗ ';
+    color: #9b1c1c;
+    font-weight: 700;
+  }
+
+  li.ok::before {
+    content: '✓ ';
+    color: #1f5b2d;
+  }
+}

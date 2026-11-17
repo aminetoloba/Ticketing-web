@@ -106,3 +106,17 @@ export interface TicketDto {
   status: TicketStatus;
   code: string;
 }
+
+export interface SaveEventRequest {
+  title: string;
+  description: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface SaveTicketTypeRequest {
+  name: string;
+  price: number;
+  totalQuantity: number;
+}

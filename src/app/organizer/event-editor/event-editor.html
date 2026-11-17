@@ -1,0 +1,131 @@
+<main class="page">
+  <a routerLink="/organizer" class="back">← Mes événements</a>
+
+  @if (loading()) {
+    <p>Chargement…</p>
+  } @else if (loadError(); as message) {
+    <p class="alert error" role="alert">{{ message }}</p>
+  } @else {
+    <div class="bar">
+      <h1>{{ isNew ? 'Nouvel événement' : event()?.title }}</h1>
+      @if (event(); as e) {
+        <span class="chip" [class]="e.status">{{ labels[e.status] }}</span>
+      }
+    </div>
+
+    @if (event(); as e) {
+      @if (!isOwner()) {
+        <p class="alert">Vous n'êtes pas l'organisateur de cet événement : consultation seule.</p>
+      } @else if (!editable()) {
+        <p class="alert">Cet événement est « {{ labels[e.status] }} » : il n'est plus modifiable.</p>
+      } @else if (datesLocked()) {
+        <p class="alert">
+          Événement publié : seuls le titre, la description et le lieu sont modifiables. Les dates
+          ne peuvent changer que par un report.
+        </p>
+      }
+    }
+
+    <form class="form card" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <label class="field">
+        Titre
+        <input type="text" formControlName="title" />
+      </label>
+      @if (form.controls.title.touched && form.controls.title.invalid) {
+        <p class="field-error">Le titre est obligatoire (200 caractères au plus).</p>
+      }
+
+      <label class="field">
+        Description
+        <textarea rows="5" formControlName="description"></textarea>
+      </label>
+      @if (form.controls.description.invalid) {
+        <p class="field-error">La description ne peut pas dépasser 4 000 caractères.</p>
+      }
+
+      <label class="field">
+        Lieu
+        <input type="text" formControlName="location" />
+      </label>
+      @if (form.controls.location.touched && form.controls.location.invalid) {
+        <p class="field-error">Le lieu est obligatoire (300 caractères au plus).</p>
+      }
+
+      <div class="two">
+        <label class="field">
+          Début
+          <input type="datetime-local" formControlName="start" />
+        </label>
+        <label class="field">
+          Fin
+          <input type="datetime-local" formControlName="end" />
+        </label>
+      </div>
+      @if (form.controls.start.touched && form.controls.start.errors?.['past']) {
+        <p class="field-error">La date de début doit être dans le futur.</p>
+      }
+      @if (form.controls.start.touched && form.controls.start.errors?.['required']) {
+        <p class="field-error">La date de début est obligatoire.</p>
+      }
+      @if (form.controls.end.touched && form.controls.end.errors?.['required']) {
+        <p class="field-error">La date de fin est obligatoire.</p>
+      }
+      @if (form.errors?.['endBeforeStart'] && form.controls.end.touched) {
+        <p class="field-error">La date de fin doit être après la date de début.</p>
+      }
+
+      @if (saveError(); as message) {
+        <p class="alert error" role="alert">{{ message }}</p>
+      }
+      @if (saved()) {
+        <p class="alert success">Modifications enregistrées.</p>
+      }
+
+      @if (editable()) {
+        <div>
+          <button type="submit" class="btn primary" [disabled]="saving()">
+            {{ saving() ? 'Enregistrement…' : isNew ? "Créer l'événement" : 'Enregistrer' }}
+          </button>
+        </div>
+      }
+    </form>
+
+    @if (event(); as e) {
+      <app-ticket-types-panel
+        [eventId]="e.id"
+        [editable]="canEditTickets()"
+        (countChange)="ticketTypeCount.set($event)"
+      />
+
+      @if (canPublish()) {
+        <section class="card">
+          <h2>Publication</h2>
+          <ul class="checklist">
+            <li [class.ok]="ticketTypeCount() > 0">Au moins un type de billet</li>
+            <li [class.ok]="!startPassed()">Date de début dans le futur</li>
+          </ul>
+
+          @if (publishError(); as message) {
+            <p class="alert error" role="alert">{{ message }}</p>
+          }
+          @if (form.dirty) {
+            <p class="meta">Enregistrez vos modifications avant de publier.</p>
+          }
+
+          <button
+            type="button"
+            class="btn primary"
+            (click)="publish()"
+            [disabled]="publishing() || form.dirty || ticketTypeCount() === 0 || startPassed()"
+          >
+            {{ publishing() ? 'Publication…' : "Publier l'événement" }}
+          </button>
+        </section>
+      }
+
+      @if (e.status !== 'Draft') {
+        <p><a [routerLink]="['/events', e.id]">Voir la page publique</a></p>
+      }
+    }
+  }
+</main>
