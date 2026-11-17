@@ -44,6 +44,9 @@ export class OrderDetail {
   protected readonly paymentMethod = signal('tok_visa');
   protected readonly paying = signal(false);
   protected readonly payError = signal<string | null>(null);
+  protected readonly refunding = signal(false);
+  protected readonly refundError = signal<string | null>(null);
+  protected readonly refunded = signal(false);
 
   // Horloge du navigateur, mise à jour chaque seconde
   private readonly now = signal(Date.now());
@@ -61,6 +64,20 @@ export class OrderDetail {
   });
 
   protected readonly isActive = computed(() => this.order()?.status === 'Pending' && !this.isExpired());
+
+  // Le remboursement à la demande n'existe que pour un événement reporté, pendant la fenêtre,
+  // et pour les commandes passées AVANT l'annonce du report (mêmes règles que l'API)
+  protected readonly refundOffer = computed<'open' | 'late' | 'closed' | null>(() => {
+    const order = this.order();
+    const event = this.event();
+
+    if (!order || !event || order.status !== 'Paid') return null;
+    if (event.status !== 'Postponed' || !event.postponedAt || !event.refundWindowEndsAt) return null;
+
+    if (Date.parse(order.createdAt) >= Date.parse(event.postponedAt)) return 'late';
+    if (this.now() > Date.parse(event.refundWindowEndsAt)) return 'closed';
+    return 'open';
+  });
 
   protected readonly countdown = computed(() => {
     const seconds = Math.max(0, Math.floor(this.msLeft() / 1000));
@@ -122,6 +139,33 @@ export class OrderDetail {
           const status = error instanceof HttpErrorResponse ? error.status : -1;
           if (status !== 402 && status !== 0) this.reloadOrder();
         },
+    });
+  }
+
+  protected requestRefund(): void {
+    const order = this.order();
+    if (!order || this.refunding()) return;
+
+    if (!confirm('Demander le remboursement de cette commande ? Vos billets seront annulés. Cette action est définitive.')) {
+      return;
+    }
+
+    this.refunding.set(true);
+    this.refundError.set(null);
+
+    this.ordersApi.requestRefund(order.id).subscribe({
+      next: (updated) => {
+        this.order.set(updated);
+        this.refunded.set(true);
+        this.refunding.set(false);
+      },
+      error: (error: unknown) => {
+        this.refundError.set(apiErrorMessage(error));
+        this.refunding.set(false);
+
+        // Sauf réseau coupé, on relit l'état réel : la commande a peut-être changé entre-temps
+        if (error instanceof HttpErrorResponse && error.status !== 0) this.reloadOrder();
+      },
     });
   }
 

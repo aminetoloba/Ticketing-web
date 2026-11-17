@@ -66,6 +66,41 @@
       </tfoot>
     </table>
 
+        @if (refunded()) {
+      <div class="banner success"><strong>Remboursement effectué.</strong> Vos billets ont été annulés.</div>
+    }
+
+    @if (event(); as ev) {
+      @switch (refundOffer()) {
+        @case ('open') {
+          <section class="payment">
+            <h2>Remboursement</h2>
+            <p class="meta">
+              L'événement a été reporté au {{ ev.startDate | date: 'd MMMM y, HH:mm' }}. Si cette date
+              ne vous convient pas, vous pouvez demander le remboursement de cette commande jusqu'au
+              {{ ev.refundWindowEndsAt | date: 'd MMMM y' }}.
+            </p>
+
+            @if (refundError(); as message) {
+              <p class="error" role="alert">{{ message }}</p>
+            }
+
+            <button type="button" class="danger-btn" (click)="requestRefund()" [disabled]="refunding()">
+              {{ refunding() ? 'Remboursement…' : 'Demander le remboursement' }}
+            </button>
+          </section>
+        }
+        @case ('late') {
+          <p class="meta">
+            Cette commande a été passée après l'annonce du report : elle n'est pas remboursable à la demande.
+          </p>
+        }
+        @case ('closed') {
+          <p class="meta">La fenêtre de remboursement est terminée.</p>
+        }
+      }
+    }
+    
     @if (isActive()) {
       <section class="payment">
         <h2>Paiement</h2>

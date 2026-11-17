@@ -135,3 +135,19 @@ table {
   overflow: hidden;
   clip: rect(0 0 0 0);
 }
+
+.danger-btn {
+  padding: 12px 24px;
+  border: 1px solid #9b1c1c;
+  border-radius: 8px;
+  background: #fff;
+  color: #9b1c1c;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}

@@ -120,3 +120,17 @@ export interface SaveTicketTypeRequest {
   price: number;
   totalQuantity: number;
 }
+
+export interface PostponeEventRequest {
+  newStartDate: string;
+  newEndDate: string;
+  reason: string;
+}
+
+export interface CancelEventResultDto {
+  event: EventDto;
+  cancelledPendingOrders: number;
+  refundedOrders: number;
+  // Commandes à retraiter : relancer l'annulation, ou intervenir à la main
+  failedOrderIds: string[];
+}

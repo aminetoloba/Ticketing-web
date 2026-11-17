@@ -15,6 +15,7 @@ import { fromLocalInput, toLocalInput } from '../../core/date-utils';
 import { EventsApi } from '../../core/events-api';
 import { EVENT_STATUS_LABELS } from '../../core/labels';
 import { EventDto, SaveEventRequest } from '../../core/models';
+import { EventActions } from '../event-actions/event-actions';
 import { TicketTypesPanel } from '../ticket-types-panel/ticket-types-panel';
 
 const endAfterStart: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
@@ -28,7 +29,7 @@ const notInPast: ValidatorFn = (control: AbstractControl): ValidationErrors | nu
 
 @Component({
   selector: 'app-event-editor',
-  imports: [ReactiveFormsModule, RouterLink, TicketTypesPanel],
+  imports: [ReactiveFormsModule, RouterLink, TicketTypesPanel, EventActions],
   templateUrl: './event-editor.html',
   styleUrl: './event-editor.scss',
 })
@@ -177,6 +178,11 @@ export class EventEditor {
         this.publishing.set(false);
       },
     });
+  }
+
+  // Appelée quand un report ou une annulation vient de réussir
+  protected onActionDone(event: EventDto): void {
+    this.applyEvent(event);
   }
 
   private applyEvent(event: EventDto): void {
