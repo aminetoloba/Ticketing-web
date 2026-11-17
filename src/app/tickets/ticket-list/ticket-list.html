@@ -25,6 +25,7 @@
                 <span class="status Valid">{{ statusLabels[t.status] }}</span>
                 @if (t.eventStatus === 'Postponed') {
                   <span class="status Postponed">{{ eventStatusLabels['Postponed'] }}</span>
+                  <a [routerLink]="['/orders', t.orderId]">Voir la commande</a>
                 }
               </div>
             </div>

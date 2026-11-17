@@ -123,6 +123,10 @@
         </section>
       }
 
+      @if (isOwner()) {
+        <app-event-actions [event]="e" (changed)="onActionDone($event)" />
+      }
+
       @if (e.status !== 'Draft') {
         <p><a [routerLink]="['/events', e.id]">Voir la page publique</a></p>
       }

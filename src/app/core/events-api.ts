@@ -2,9 +2,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { API_URL } from './api-config';
 import {
+  CancelEventResultDto,
   EventDto,
   EventQuery,
   PagedResult,
+  PostponeEventRequest,
   SaveEventRequest,
   SaveTicketTypeRequest,
   TicketTypeDto,
@@ -47,6 +49,14 @@ export class EventsApi {
 
   publish(id: string) {
     return this.http.post<EventDto>(`${API_URL}/events/${id}/publish`, {});
+  }
+
+  postpone(id: string, request: PostponeEventRequest) {
+    return this.http.post<EventDto>(`${API_URL}/events/${id}/postpone`, request);
+  }
+
+  cancel(id: string) {
+    return this.http.post<CancelEventResultDto>(`${API_URL}/events/${id}/cancel`, {});
   }
 
   ticketTypes(id: string) {

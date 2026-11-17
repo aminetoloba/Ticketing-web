@@ -22,4 +22,8 @@ export class OrdersApi {
   pay(id: string, paymentMethod: string) {
     return this.http.post<OrderDto>(`${API_URL}/orders/${id}/pay`, { paymentMethod });
   }
+
+  requestRefund(id: string) {
+    return this.http.post<OrderDto>(`${API_URL}/orders/${id}/refund-request`, {});
+  }
 }

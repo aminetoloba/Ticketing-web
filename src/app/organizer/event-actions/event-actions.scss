@@ -1,0 +1,19 @@
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn.danger {
+  border-color: #9b1c1c;
+  color: #9b1c1c;
+}
+
+ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+code {
+  word-break: break-all;
+}

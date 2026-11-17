@@ -1,0 +1,112 @@
+@if (notice(); as message) {
+  <p class="alert success">{{ message }}</p>
+}
+
+@if (canPostpone()) {
+  <section class="card">
+    <h2>Reporter l'événement</h2>
+    <p class="meta">
+      Les billets déjà vendus restent valables à la nouvelle date. Les participants peuvent demander
+      un remboursement pendant 14 jours. Un événement ne peut être reporté qu'une seule fois.
+    </p>
+
+    <form class="form" [formGroup]="postponeForm" (ngSubmit)="postpone()" novalidate>
+      <div class="two">
+        <label class="field">
+          Nouveau début
+          <input type="datetime-local" formControlName="start" />
+        </label>
+        <label class="field">
+          Nouvelle fin
+          <input type="datetime-local" formControlName="end" />
+        </label>
+      </div>
+      @if (postponeForm.controls.start.touched && postponeForm.controls.start.errors?.['required']) {
+        <p class="field-error">La nouvelle date de début est obligatoire.</p>
+      }
+      @if (postponeForm.controls.start.touched && postponeForm.controls.start.errors?.['past']) {
+        <p class="field-error">La nouvelle date de début doit être dans le futur.</p>
+      }
+      @if (postponeForm.controls.end.touched && postponeForm.controls.end.errors?.['required']) {
+        <p class="field-error">La nouvelle date de fin est obligatoire.</p>
+      }
+      @if (postponeForm.errors?.['endBeforeStart'] && postponeForm.controls.end.touched) {
+        <p class="field-error">La date de fin doit être après la date de début.</p>
+      }
+
+      <label class="field">
+        Motif du report (visible par les participants)
+        <textarea rows="3" formControlName="reason"></textarea>
+      </label>
+      @if (postponeForm.controls.reason.touched && postponeForm.controls.reason.invalid) {
+        <p class="field-error">Le motif est obligatoire (1 000 caractères au plus).</p>
+      }
+
+      @if (postponeError(); as message) {
+        <p class="alert error" role="alert">{{ message }}</p>
+      }
+
+      <div>
+        <button type="submit" class="btn primary" [disabled]="postponing()">
+          {{ postponing() ? 'Report en cours…' : 'Reporter l\'événement' }}
+        </button>
+      </div>
+    </form>
+  </section>
+}
+
+@if (canCancel()) {
+  <section class="card">
+    <h2>Annuler l'événement</h2>
+    <p class="meta">
+      Toutes les commandes payées sont remboursées automatiquement, les billets sont annulés et les
+      réservations en attente sont libérées. L'annulation est impossible si un billet a déjà été scanné.
+    </p>
+
+    @if (cancelError(); as message) {
+      <p class="alert error" role="alert">{{ message }}</p>
+    }
+
+    <button type="button" class="btn danger" (click)="cancel()" [disabled]="cancelling()">
+      {{ cancelling() ? 'Annulation en cours…' : 'Annuler l\'événement' }}
+    </button>
+  </section>
+}
+
+@if (isCancelled()) {
+  <section class="card">
+    <h2>Événement annulé</h2>
+
+    @if (cancelResult(); as result) {
+      <ul>
+        <li>Commandes payées remboursées : {{ result.refundedOrders }}</li>
+        <li>Réservations en attente annulées : {{ result.cancelledPendingOrders }}</li>
+      </ul>
+
+      @if (result.failedOrderIds.length > 0) {
+        <p class="alert error" role="alert">
+          {{ result.failedOrderIds.length }} commande(s) n'ont pas pu être remboursées
+          automatiquement. Relancez la procédure ; si l'échec persiste, contactez le support avec
+          ces identifiants : <code>{{ result.failedOrderIds.join(', ') }}</code>
+        </p>
+      } @else {
+        <p class="alert success">Toutes les commandes payées ont été remboursées.</p>
+      }
+    } @else {
+      <p class="meta">
+        Si un remboursement a échoué lors de l'annulation, vous pouvez relancer la procédure : seules
+        les commandes restantes sont traitées.
+      </p>
+    }
+
+    @if (cancelError(); as message) {
+      <p class="alert error" role="alert">{{ message }}</p>
+    }
+
+    @if (needsRetry()) {
+      <button type="button" class="btn" (click)="cancel()" [disabled]="cancelling()">
+        {{ cancelling() ? 'Traitement…' : 'Relancer les remboursements' }}
+      </button>
+    }
+  </section>
+}
