@@ -16,6 +16,7 @@ import { EventsApi } from '../../core/events-api';
 import { EVENT_STATUS_LABELS } from '../../core/labels';
 import { EventDto, SaveEventRequest } from '../../core/models';
 import { EventActions } from '../event-actions/event-actions';
+import { StaffPanel } from '../staff-panel/staff-panel';
 import { TicketTypesPanel } from '../ticket-types-panel/ticket-types-panel';
 
 const endAfterStart: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
@@ -29,7 +30,7 @@ const notInPast: ValidatorFn = (control: AbstractControl): ValidationErrors | nu
 
 @Component({
   selector: 'app-event-editor',
-  imports: [ReactiveFormsModule, RouterLink, TicketTypesPanel, EventActions],
+  imports: [ReactiveFormsModule, RouterLink, TicketTypesPanel, EventActions, StaffPanel],
   templateUrl: './event-editor.html',
   styleUrl: './event-editor.scss',
 })
@@ -98,6 +99,7 @@ export class EventEditor {
   });
 
   protected readonly canPublish = computed(() => this.event()?.status === 'Draft' && this.isOwner());
+  protected readonly canManageStaff = computed(() => this.canEditTickets());
   protected readonly startPassed = computed(() => {
     const e = this.event();
     return !!e && Date.parse(e.startDate) <= Date.now();

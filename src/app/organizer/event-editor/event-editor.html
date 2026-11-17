@@ -97,6 +97,10 @@
         (countChange)="ticketTypeCount.set($event)"
       />
 
+      @if (canManageStaff()) {
+        <app-staff-panel [eventId]="e.id" />
+      }
+
       @if (canPublish()) {
         <section class="card">
           <h2>Publication</h2>

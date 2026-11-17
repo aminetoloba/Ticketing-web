@@ -44,6 +44,11 @@ export const routes: Routes = [
     loadComponent: () => import('./organizer/event-editor/event-editor').then((m) => m.EventEditor),
   },
   {
+    path: 'scan',
+    canActivate: [roleGuard('Staff', 'Admin')],
+    loadComponent: () => import('./staff/scan/scan').then((m) => m.Scan),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./auth/login/login').then((m) => m.Login),
   },

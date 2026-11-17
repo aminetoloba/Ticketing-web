@@ -11,6 +11,9 @@
       @if (user.role === 'Organizer' || user.role === 'Admin') {
         <a routerLink="/organizer" routerLinkActive="active">Espace organisateur</a>
       }
+      @if (user.role === 'Staff' || user.role === 'Admin') {
+        <a routerLink="/scan" routerLinkActive="active">Contrôle des billets</a>
+      }
     }
   </nav>
 
