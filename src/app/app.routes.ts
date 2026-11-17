@@ -28,6 +28,22 @@ export const routes: Routes = [
     loadComponent: () => import('./tickets/ticket-list/ticket-list').then((m) => m.TicketList),
   },
   {
+    path: 'organizer',
+    canActivate: [roleGuard('Organizer', 'Admin')],
+    loadComponent: () =>
+      import('./organizer/organizer-events/organizer-events').then((m) => m.OrganizerEvents),
+  },
+  {
+    path: 'organizer/events/new',
+    canActivate: [roleGuard('Organizer', 'Admin')],
+    loadComponent: () => import('./organizer/event-editor/event-editor').then((m) => m.EventEditor),
+  },
+  {
+    path: 'organizer/events/:id',
+    canActivate: [roleGuard('Organizer', 'Admin')],
+    loadComponent: () => import('./organizer/event-editor/event-editor').then((m) => m.EventEditor),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./auth/login/login').then((m) => m.Login),
   },

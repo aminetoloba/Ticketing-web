@@ -8,6 +8,9 @@
         <a routerLink="/orders" routerLinkActive="active">Mes commandes</a>
         <a routerLink="/tickets" routerLinkActive="active">Mes billets</a>
       }
+      @if (user.role === 'Organizer' || user.role === 'Admin') {
+        <a routerLink="/organizer" routerLinkActive="active">Espace organisateur</a>
+      }
     }
   </nav>
 

@@ -1,0 +1,37 @@
+<main class="page">
+  <div class="bar">
+    <h1>Mes événements</h1>
+    <a class="btn primary" routerLink="/organizer/events/new">Créer un événement</a>
+  </div>
+
+  @if (loading()) {
+    <p>Chargement…</p>
+  } @else if (error(); as message) {
+    <p class="alert error" role="alert">{{ message }}</p>
+  } @else if (result(); as data) {
+    @if (data.items.length === 0) {
+      <p>Vous n'avez pas encore créé d'événement.</p>
+    } @else {
+      <ul class="rows">
+        @for (e of data.items; track e.id) {
+          <li class="row">
+            <div>
+              <a class="title" [routerLink]="['/organizer/events', e.id]">{{ e.title }}</a>
+              <p class="meta">{{ e.location }} · {{ e.startDate | date: 'EEEE d MMMM y, HH:mm' }}</p>
+            </div>
+            <div class="right">
+              <span class="chip" [class]="e.status">{{ labels[e.status] }}</span>
+              <a class="btn" [routerLink]="['/organizer/events', e.id]">Gérer</a>
+            </div>
+          </li>
+        }
+      </ul>
+
+      @if (data.totalCount > data.items.length) {
+        <p class="meta">
+          Les {{ data.items.length }} événements les plus récents sont affichés sur {{ data.totalCount }}.
+        </p>
+      }
+    }
+  }
+</main>
