@@ -1,0 +1,107 @@
+<main class="page">
+  <h1>Contrôle des billets</h1>
+
+  @if (loading()) {
+    <p>Chargement…</p>
+  } @else if (loadError(); as message) {
+    <p class="alert error" role="alert">{{ message }}</p>
+  } @else if (events().length === 0) {
+    <p class="alert">
+      Aucun événement ne vous est affecté pour le moment. Demandez à l'organisateur de vous affecter
+      à son événement. Seuls les événements publiés dont le contrôle n'est pas terminé apparaissent ici.
+    </p>
+  } @else {
+    <section class="card">
+      <label class="field">
+        Événement
+        <select [formControl]="eventControl">
+          <option value="" disabled>Choisir un événement</option>
+          @for (e of events(); track e.id) {
+            <option [value]="e.id">{{ e.title }} · {{ e.startDate | date: 'd MMM y, HH:mm' }}</option>
+          }
+        </select>
+      </label>
+
+      <form class="form" (submit)="onSubmit($event)">
+        <label class="field">
+          Code du billet
+          <input
+            #codeInput
+            type="text"
+            class="code-input"
+            [formControl]="code"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="32 caractères"
+          />
+        </label>
+        @if (code.touched && code.invalid) {
+          <p class="field-error">Le code doit comporter 32 caractères (chiffres et lettres de A à F).</p>
+        }
+
+        <div>
+          <button type="submit" class="btn primary" [disabled]="scanning() || !eventControl.value">
+            {{ scanning() ? 'Vérification…' : 'Valider le billet' }}
+          </button>
+        </div>
+        @if (!eventControl.value) {
+          <p class="meta">Choisissez d'abord un événement.</p>
+        }
+      </form>
+
+            <div class="camera">
+        <p class="meta">ou lisez directement le QR code du billet :</p>
+
+        <div class="viewfinder" [hidden]="!cameraOn()">
+          <video #video playsinline muted></video>
+        </div>
+
+        @if (cameraError(); as message) {
+          <p class="alert error" role="alert">{{ message }}</p>
+        }
+        @if (cameraOn() && !eventControl.value) {
+          <p class="alert">Choisissez d'abord un événement : les codes lus ne seront pas contrôlés.</p>
+        }
+
+        <div>
+          <button
+            type="button"
+            class="btn"
+            (click)="cameraOn() ? stopCamera() : startCamera()"
+            [disabled]="cameraStarting()"
+          >
+            {{ cameraStarting() ? 'Démarrage…' : cameraOn() ? 'Arrêter la caméra' : 'Scanner avec la caméra' }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    @if (last(); as result) {
+      <div class="result" [class.ok]="result.ok" [class.ko]="!result.ok" role="status" aria-live="polite">
+        <span class="icon" aria-hidden="true">{{ result.ok ? '✓' : '✗' }}</span>
+        <div>
+          <strong>{{ result.message }}</strong>
+          @if (result.detail) {
+            <p>{{ result.detail }}</p>
+          }
+        </div>
+      </div>
+    }
+
+    @if (history().length > 0) {
+      <section class="card">
+        <h2>Derniers contrôles</h2>
+        <ul class="history">
+          @for (h of history(); track $index) {
+            <li [class.ok]="h.ok" [class.ko]="!h.ok">
+              <span class="time">{{ h.at | date: 'HH:mm:ss' }}</span>
+              <code>{{ maskedCode(h.code) }}</code>
+              <span>{{ h.ok ? 'Valide' : h.message }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+</main>

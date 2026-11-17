@@ -1,0 +1,55 @@
+<section class="card">
+  <h2>Staff</h2>
+  <p class="meta">
+    Seuls les comptes dotés du rôle « Staff » peuvent être affectés. Ce rôle est attribué par un
+    administrateur.
+  </p>
+
+  @if (loading()) {
+    <p>Chargement…</p>
+  } @else if (loadError(); as message) {
+    <p class="alert error" role="alert">{{ message }}</p>
+  } @else {
+    @if (members().length === 0) {
+      <p class="meta">Aucun membre du staff n'est affecté à cet événement.</p>
+    } @else {
+      <ul class="members">
+        @for (m of members(); track m.staffId) {
+          <li>
+            <div>
+              <strong>{{ m.fullName }}</strong>
+              <p class="meta">{{ m.email }} · affecté le {{ m.assignedAt | date: 'd MMMM y' }}</p>
+            </div>
+            <button type="button" class="btn" (click)="remove(m)" [disabled]="removingId() !== null">
+              {{ removingId() === m.staffId ? 'Retrait…' : 'Retirer' }}
+            </button>
+          </li>
+        }
+      </ul>
+    }
+
+    @if (removeError(); as message) {
+      <p class="alert error" role="alert">{{ message }}</p>
+    }
+  }
+
+  <form class="form add" [formGroup]="form" (ngSubmit)="add()" novalidate>
+    <label class="field">
+      Affecter un membre du staff
+      <input type="email" formControlName="email" placeholder="email@exemple.com" />
+    </label>
+    @if (form.controls.email.touched && form.controls.email.invalid) {
+      <p class="field-error">Saisissez une adresse email valide.</p>
+    }
+
+    @if (addError(); as message) {
+      <p class="alert error" role="alert">{{ message }}</p>
+    }
+
+    <div>
+      <button type="submit" class="btn" [disabled]="adding()">
+        {{ adding() ? 'Affectation…' : 'Affecter' }}
+      </button>
+    </div>
+  </form>
+</section>

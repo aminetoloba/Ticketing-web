@@ -134,3 +134,17 @@ export interface CancelEventResultDto {
   // Commandes à retraiter : relancer l'annulation, ou intervenir à la main
   failedOrderIds: string[];
 }
+
+export interface StaffMemberDto {
+  staffId: string;
+  email: string;
+  fullName: string;
+  assignedAt: string;
+}
+
+export interface CheckInResultDto {
+  ticketId: string;
+  ticketTypeName: string;
+  status: TicketStatus;
+  usedAt: string;
+}
