@@ -148,3 +148,17 @@ export interface CheckInResultDto {
   status: TicketStatus;
   usedAt: string;
 }
+
+export interface UserDto {
+  id: string;
+  email: string;
+  fullName: string;
+  role: Role;
+}
+
+export interface UserQuery {
+  search?: string;
+  role?: Role | '';
+  page?: number;
+  pageSize?: number;
+}

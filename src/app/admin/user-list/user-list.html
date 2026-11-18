@@ -1,0 +1,75 @@
+<main class="page">
+  <h1>Utilisateurs</h1>
+
+  <div class="filters">
+    <input type="search" placeholder="Rechercher par nom ou email" [formControl]="search" />
+    <select [formControl]="roleFilter" aria-label="Filtrer par rôle">
+      <option value="">Tous les rôles</option>
+      @for (r of roles; track r) {
+        <option [value]="r">{{ labels[r] }}</option>
+      }
+    </select>
+  </div>
+
+  @if (notice(); as message) {
+    <p class="alert success">{{ message }}</p>
+  }
+  @if (changeError(); as message) {
+    <p class="alert error" role="alert">{{ message }}</p>
+  }
+  @if (error(); as message) {
+    <p class="alert error" role="alert">{{ message }}</p>
+  }
+
+  @if (loading() && !result()) {
+    <p>Chargement…</p>
+  }
+
+  @if (result(); as data) {
+    @if (data.items.length === 0) {
+      <p>Aucun utilisateur ne correspond à votre recherche.</p>
+    } @else {
+      <table [class.loading]="loading()">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Rôle</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of data.items; track u.id) {
+            <tr>
+              <td>{{ u.fullName }}</td>
+              <td>{{ u.email }}</td>
+              <td>
+                @if (u.id === auth.user()?.id) {
+                  <span class="chip">{{ labels[u.role] }}</span>
+                  <span class="meta">(vous)</span>
+                } @else {
+                  <select
+                    [disabled]="changingId() !== null"
+                    (change)="changeRole(u, $event)"
+                    [attr.aria-label]="'Rôle de ' + u.fullName"
+                  >
+                    @for (r of roles; track r) {
+                      <option [value]="r" [selected]="r === u.role">{{ labels[r] }}</option>
+                    }
+                  </select>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (data.totalPages > 1) {
+        <nav class="pagination" aria-label="Pagination">
+          <button type="button" class="btn" (click)="goTo(data.page - 1)" [disabled]="data.page <= 1">Précédent</button>
+          <span>Page {{ data.page }} sur {{ data.totalPages }} ({{ data.totalCount }} utilisateurs)</span>
+          <button type="button" class="btn" (click)="goTo(data.page + 1)" [disabled]="data.page >= data.totalPages">Suivant</button>
+        </nav>
+      }
+    }
+  }
+</main>

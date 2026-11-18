@@ -1,0 +1,51 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  input,
+  select {
+    padding: 10px 12px;
+    border: 1px solid #c9cfda;
+    border-radius: 8px;
+    font: inherit;
+  }
+
+  input {
+    flex: 1 1 260px;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  transition: opacity 0.15s;
+
+  &.loading {
+    opacity: 0.5;
+  }
+
+  th,
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e1e5ec;
+    text-align: left;
+  }
+
+  select {
+    padding: 6px 8px;
+    border: 1px solid #c9cfda;
+    border-radius: 8px;
+    font: inherit;
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+}
