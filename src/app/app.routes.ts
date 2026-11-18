@@ -49,6 +49,11 @@ export const routes: Routes = [
     loadComponent: () => import('./staff/scan/scan').then((m) => m.Scan),
   },
   {
+    path: 'admin/users',
+    canActivate: [roleGuard('Admin')],
+    loadComponent: () => import('./admin/user-list/user-list').then((m) => m.UserList),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./auth/login/login').then((m) => m.Login),
   },

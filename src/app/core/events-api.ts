@@ -1,6 +1,7 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { API_URL } from './api-config';
+import { toParams } from './http-params';
 import {
   CancelEventResultDto,
   EventDto,
@@ -11,17 +12,6 @@ import {
   SaveTicketTypeRequest,
   TicketTypeDto,
 } from './models';
-
-// On n'envoie que les filtres renseignés
-function toParams(query: EventQuery): HttpParams {
-  let params = new HttpParams();
-  for (const [key, value] of Object.entries(query)) {
-    if (value !== undefined && value !== null && value !== '') {
-      params = params.set(key, String(value));
-    }
-  }
-  return params;
-}
 
 @Injectable({ providedIn: 'root' })
 export class EventsApi {
